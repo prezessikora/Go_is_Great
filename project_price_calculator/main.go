@@ -15,14 +15,20 @@ func main() {
 
 	for index, taxRate := range taxRates {
 		doneChans[index] = make(chan bool)
+		errorChans[index] = make(chan error)
 		ioManager := filemanager.New("prices.txt", fmt.Sprintf("prices_%v.json", taxRate))
+		//introduce an error
+		if index == 1 {
+			ioManager = filemanager.New("prices2.txt", fmt.Sprintf("prices_%v.json", taxRate))
+		}
+
 		job := prices.NewTaxIncludedPriceJob(taxRate, ioManager)
 
 		go job.Process(doneChans[index], errorChans[index])
 
 	}
 	//wait for the go routines to finish by emitting a bool or error
-	for index := range taxRates {
+	for index, _ := range taxRates {
 		select {
 		case err := <-errorChans[index]:
 			if err != nil {

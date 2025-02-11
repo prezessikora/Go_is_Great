@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"os"
 	"time"
 )
@@ -24,17 +23,17 @@ func New(inputFilePath, outputFilePath string) FileManager {
 func (f FileManager) WriteResult(data interface{}) error {
 	file, err := os.Create(f.OutputFilePath)
 	if err != nil {
-		file.Close()
 		return err
 	}
+
+	defer file.Close()
+
 	time.Sleep(time.Second * 3)
 	encoder := json.NewEncoder(file)
 	err = encoder.Encode(data)
 	if err != nil {
-		file.Close()
 		return errors.New("error encoding JSON")
 	}
-	file.Close()
 	return nil
 }
 
@@ -42,10 +41,11 @@ func (f FileManager) ReadLines() (*[]string, error) {
 	lines := []string{}
 	file, err := os.Open(f.InputFilePath)
 	if err != nil {
-		fmt.Println("error when opening file")
-		file.Close()
 		return nil, err
 	}
+
+	defer file.Close()
+
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		textPrice := scanner.Text()
@@ -53,10 +53,7 @@ func (f FileManager) ReadLines() (*[]string, error) {
 	}
 	err = scanner.Err()
 	if err != nil {
-		file.Close()
 		return nil, err
 	}
-	file.Close()
-
 	return &lines, nil
 }

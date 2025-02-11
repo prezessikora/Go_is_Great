@@ -20,7 +20,7 @@ func (job *TaxIncludedPriceJob) Process(channel chan bool, errChannel chan error
 	err := job.ReadInPrices()
 
 	if err != nil {
-		fmt.Println("emiting error")
+
 		errChannel <- err
 		return
 	}
