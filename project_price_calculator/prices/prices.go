@@ -5,28 +5,38 @@ import (
 	"fmt"
 	"strconv"
 
-	"com.sikora/price-calculator/filemanager"
+	"com.sikora/price-calculator/iomanager"
 )
 
 type TaxIncludedPriceJob struct {
-	TaxRate           float64
-	InputPrices       []float64
-	TaxIncludedPrices map[string]string
-	fm                filemanager.FileManager
+	TaxRate           float64             `json:"tax_rate"`
+	InputPrices       []float64           `json:"input_prices"`
+	TaxIncludedPrices map[string]string   `json:"tax_included_prices"`
+	fm                iomanager.IOManager `json:"-"`
 }
 
-func (job *TaxIncludedPriceJob) Process() {
+func (job *TaxIncludedPriceJob) Process(channel chan bool, errChannel chan error) {
+
+	err := job.ReadInPrices()
+
+	if err != nil {
+		fmt.Println("emiting error")
+		errChannel <- err
+		return
+	}
 
 	result := make(map[string]string)
 	for _, price := range job.InputPrices {
 		result[fmt.Sprintf("%.2f", price)] = fmt.Sprintf("%.2f", price*(1+job.TaxRate))
 	}
 	job.TaxIncludedPrices = result
-	err := job.fm.WriteJson(job)
+	err = job.fm.WriteResult(job)
 
 	if err != nil {
-		fmt.Println("error saving json")
+		errChannel <- err
+		return
 	}
+	channel <- true
 }
 
 func (job *TaxIncludedPriceJob) ReadInPrices() error {
@@ -44,7 +54,7 @@ func (job *TaxIncludedPriceJob) ReadInPrices() error {
 	return nil
 }
 
-func NewTaxIncludedPriceJob(rate float64, ioManager filemanager.FileManager) *TaxIncludedPriceJob {
+func NewTaxIncludedPriceJob(rate float64, ioManager iomanager.IOManager) *TaxIncludedPriceJob {
 	return &TaxIncludedPriceJob{
 		TaxRate:     rate,
 		InputPrices: []float64{},
