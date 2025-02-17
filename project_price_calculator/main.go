@@ -28,7 +28,7 @@ func main() {
 
 	}
 	//wait for the go routines to finish by emitting a bool or error
-	for index, _ := range taxRates {
+	for index := range taxRates {
 		select {
 		case err := <-errorChans[index]:
 			if err != nil {

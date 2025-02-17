@@ -1,0 +1,31 @@
+GET http://localhost:8080/events/4
+
+###
+
+GET http://localhost:8080/events
+
+###
+
+POST http://localhost:8080/events
+content-type: application/json
+
+{    
+	"name" : "Test event",
+	"description" : "Test description",
+	"location" : "test location",
+	"dateTime" : "2025-02-12T15:30:00.000Z"
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
