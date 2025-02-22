@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"time"
 
 	"com.sikora/events/db"
@@ -13,6 +14,40 @@ type Event struct {
 	Description string    `binding:"required"`
 	Location    string    `binding:"required"`
 	DateTime    time.Time `binding:"required"`
+}
+
+func (event *Event) Delete() error {
+	updateSql := "DELETE FROM events WHERE id=?"
+	result, err := db.DB.Exec(updateSql, event.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected != 1 {
+		return errors.New("expected to affect one row, affected")
+	}
+	return nil
+
+}
+
+func (e *Event) Update() error {
+	updateSql := "UPDATE events SET name=? ,description=?,location=?,dateTime=? WHERE id=?"
+	result, err := db.DB.Exec(updateSql, e.Name, e.Description, e.Location, e.DateTime, e.ID)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected != 1 {
+		return errors.New("expected to affect one row, affected")
+	}
+	return nil
+
 }
 
 func (e *Event) Save() error {

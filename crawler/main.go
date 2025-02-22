@@ -50,7 +50,8 @@ func Crawl(url string, depth int, fetcher Fetcher) {
 
 func main() {
 
-	Crawl("https://golang.org/", 4, fetcher)
+	//Crawl("https://golang.org/", 4, fetcher)
+	main_alternative()
 
 }
 
@@ -63,12 +64,13 @@ type fakeResult struct {
 }
 
 func (f fakeFetcher) Fetch(url string) (string, []string, error) {
-	fmt.Println("Fetching ...", url)
+	fmt.Println("Fetching ... ", url)
 	if res, ok := f[url]; ok {
-
+		// it takes some time to download a page
 		time.Sleep(4 * time.Second)
 		return res.body, res.urls, nil
 	}
+	// fakes 404
 	return "", nil, fmt.Errorf("not found: %s", url)
 }
 

@@ -1,4 +1,8 @@
-GET http://localhost:8080/events/4
+DELETE  http://localhost:8080/events/12
+
+###
+
+GET http://localhost:8080/events/1
 
 ###
 
@@ -16,16 +20,14 @@ content-type: application/json
 	"dateTime" : "2025-02-12T15:30:00.000Z"
 }
 
+###
 
+PUT http://localhost:8080/events/3
+content-type: application/json
 
-
-
-
-
-
-
-
-
-
-
-
+{    
+	"name" : "Test event updated",
+	"description" : "Test descripti   3123213 123 on",
+	"location" : "test location",
+	"dateTime" : "2025-02-12T15:30:00.000Z"
+}
