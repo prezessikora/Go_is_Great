@@ -55,8 +55,6 @@ func create_with_make() {
 }
 
 func main() {
-	//fixed_slices()
-	//dynamic_slices()
-	maps()
-	//create_with_make()
+	fmt.Printf("ssssss %s")
+
 }

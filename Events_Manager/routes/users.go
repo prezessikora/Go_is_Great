@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"com.sikora/events/models"
+	"com.sikora/events/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -38,6 +39,12 @@ func login(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"message": err})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": "login success"})
+	token, err := utils.GenerateToken(user.Email, user.ID)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "could not generate JWT token"})
+		fmt.Println(err)
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"message": "login success", "token": token})
 
 }

@@ -15,15 +15,18 @@ type User struct {
 }
 
 func (user *User) VerifyCredetials() error {
-	query := `SELECT password FROM users WHERE email=?`
+	query := `SELECT id, password FROM users WHERE email=?`
 	row := db.DB.QueryRow(query, user.Email)
 
 	var retrievedPassword string
-	err := row.Scan(&retrievedPassword)
+	var userId int64
+	err := row.Scan(&userId, &retrievedPassword)
+
 	if err != nil {
 		fmt.Println(err)
 		return err
 	}
+	user.ID = userId
 	passwordIsVaild := utils.CheckHashedPassword(user.Password, retrievedPassword)
 	if !passwordIsVaild {
 		fmt.Println("credentials invalid")
